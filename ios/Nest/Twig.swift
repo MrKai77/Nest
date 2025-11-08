@@ -48,7 +48,7 @@ struct Listing: Codable {
     let address: String
     let price: Double
     let dateListed: Date
-    let imageUrl: String?
+    let imageUrl: URL?
     
     // Optional amenities
     let squareFootage: Int?
