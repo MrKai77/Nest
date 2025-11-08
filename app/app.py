@@ -1,3 +1,4 @@
+import uuid
 
 from fastapi import FastAPI, Body
 from fastapi.responses import PlainTextResponse
@@ -18,6 +19,7 @@ def search_listings(request: SearchRequest):
     # Sample listings
     sample_listings = [
         Listing(
+            id=str(uuid.uuid4()),
             longitude=-122.4194,
             latitude=37.7749,
             address="123 Market St, San Francisco, CA",
@@ -31,6 +33,7 @@ def search_listings(request: SearchRequest):
             garage=False,
         ),
         Listing(
+            id=str(uuid.uuid4()),
             longitude=-73.935242,
             latitude=40.73061,
             address="456 Broadway, New York, NY",

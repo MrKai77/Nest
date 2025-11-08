@@ -2,8 +2,12 @@ from pydantic import BaseModel, Field
 from typing import Optional, List
 
 class DatabaseListing(BaseModel):
+    id: str
+
     price: float
     date_listed: str
+    created_at: str
+    updated_at: str
     image_url: Optional[str] = None
 
     # Location fields
@@ -21,6 +25,8 @@ class DatabaseListing(BaseModel):
     weightedScore: float
 
 class Listing(BaseModel):
+    id: str
+
     price: float
     date_listed: str
     image_url: Optional[str] = None
