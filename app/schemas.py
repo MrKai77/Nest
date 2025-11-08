@@ -2,32 +2,38 @@ from pydantic import BaseModel, Field
 from typing import Optional, List
 
 class Listing(BaseModel):
+    price: float
+    date_listed: int # UNIX timestamp
+    image_url: Optional[str] = None
+
+    # Location fields
     longitude: float
     latitude: float
     address: str
 
-class Location(BaseModel):
-    address: str
-    longitude: float
-    latitude: float
-
-class Amenities(BaseModel):
+    # Amenities (optional)
     square_footage: Optional[int] = None
     bathroom_num: Optional[int] = Field(None, alias="bathroom_num")
     bedrooms_num: Optional[int] = Field(None, alias="bedrooms_num")
     backyard: Optional[bool] = None
     garage: Optional[bool] = None
 
-class Price(BaseModel):
-    min_price: Optional[float] = None
-    max_price: Optional[float] = None
-
-# REQUESTS/RESPONSES
-
 class SearchRequest(BaseModel):
-    location: Location
-    amenities: Optional[Amenities] = None
-    price: Optional[Price] = None
+    # Location fields
+    address: str
+    longitude: float
+    latitude: float
+
+    # Amenities (optional)
+    square_footage: Optional[int] = None
+    bathroom_num: Optional[int] = Field(None, alias="bathroom_num")
+    bedrooms_num: Optional[int] = Field(None, alias="bedrooms_num")
+    backyard: Optional[bool] = None
+    garage: Optional[bool] = None
+
+    # Price range (optional)
+    min_price: Optional[float] = Field(None, alias="min_price")
+    max_price: Optional[float] = Field(None, alias="max_price")
 
 class ListingsResponse(BaseModel):
     listings: List[Listing]
