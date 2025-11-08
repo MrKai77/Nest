@@ -1,9 +1,28 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List
 
+class DatabaseListing(BaseModel):
+    price: float
+    date_listed: str
+    image_url: Optional[str] = None
+
+    # Location fields
+    longitude: float
+    latitude: float
+    address: str
+
+    # Amenities (optional)
+    square_footage: Optional[int] = None
+    bathroom_num: Optional[int] = Field(None, alias="bathroom_num")
+    bedrooms_num: Optional[int] = Field(None, alias="bedrooms_num")
+    backyard: Optional[bool] = None
+    garage: Optional[bool] = None
+
+    weightedScore: float
+
 class Listing(BaseModel):
     price: float
-    date_listed: int # UNIX timestamp
+    date_listed: str
     image_url: Optional[str] = None
 
     # Location fields
