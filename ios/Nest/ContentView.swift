@@ -1,0 +1,48 @@
+//
+//  ContentView.swift
+//  Nest
+//
+//  Created by Kai Azim on 2025-11-08.
+//
+
+import SwiftUI
+
+struct ContentView: View {
+    let twig = Twig()
+
+    var body: some View {
+        VStack {
+            Button("Check connection") {
+                Task {
+                    await print(twig.checkConnection())
+                }
+            }
+            
+            Button("Get listings") {
+                Task {
+                    try! await print(
+                        twig.searchListings(
+                            .init(
+                                address: "119 Valley Ponds Cres.",
+                                longitude: 100,
+                                latitude: 100,
+                                squareFootage: 0,
+                                bathroomNum: 0,
+                                bedroomsNum: 0,
+                                backyard: nil,
+                                garage: nil,
+                                minPrice: 0,
+                                maxPrice: 0
+                            )
+                        )
+                    )
+                }
+            }
+        }
+        .padding()
+    }
+}
+
+#Preview {
+    ContentView()
+}
