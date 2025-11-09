@@ -8,8 +8,6 @@
 import Foundation
 
 final class Twig {
-    private static let endpoint: URL = URL(string: "https://pnhacu5mrr.us-east-1.awsapprunner.com")!
-    
     private static let decoder: JSONDecoder = {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
@@ -17,7 +15,7 @@ final class Twig {
     }()
     
     func checkConnection() async -> Bool {
-        let pingURL = Self.endpoint.appendingPathComponent("ping")
+        let pingURL = Environment.AWS_URL.appendingPathComponent("ping")
         var request = URLRequest(url: pingURL)
         request.httpMethod = "GET"
         
@@ -31,7 +29,7 @@ final class Twig {
     }
     
     func searchListings(_ searchRequest: SearchRequest) async throws -> [Listing] {
-        let url = Self.endpoint.appendingPathComponent("search_listings")
+        let url = Environment.AWS_URL.appendingPathComponent("search_listings")
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
