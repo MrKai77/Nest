@@ -43,6 +43,7 @@ class CreateListingRequest(BaseModel):
     description: Optional[str] = None
 
 class Listing(BaseModel):
+    id: str
 
     price: float
     date_listed: str
@@ -61,7 +62,6 @@ class Listing(BaseModel):
     garage: Optional[bool] = None
 
 class SearchRequest(BaseModel):
-
     description: Optional[str] = None
     
     # Location fields

@@ -1,3 +1,5 @@
 __pycache__
 xcuserdata
 ios/Nest/Env.swift
+venv/
+*.env

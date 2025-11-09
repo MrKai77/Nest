@@ -26,9 +26,9 @@ def ping():
 def create_listing(request: CreateListingRequest):
     db_listing = bedrock_embedding_agent.encode_and_store_listing(request)
 
-    # Strip internal fields (id, weighted_score, updated_at) from response
+    # Strip internal fields (weighted_score, updated_at) from response
     public = Listing(
-        **db_listing.model_dump(exclude={"id", "weighted_score", "updated_at"})
+        **db_listing.model_dump(exclude={"weighted_score", "updated_at"})
     )
     return public
 
@@ -36,9 +36,9 @@ def create_listing(request: CreateListingRequest):
 def search_listings(request: SearchRequest):
     db_listings: list[DatabaseListing] = search_listings_in_db(request)
 
-    # Strip internal fields from response (id, weighted_score, updated_at)
+    # Strip internal fields from response (weighted_score, updated_at)
     listings: list[Listing] = [
-        Listing(**l.model_dump(exclude={"id", "weighted_score", "updated_at"}))
+        Listing(**l.model_dump(exclude={"weighted_score", "updated_at"}))
         for l in db_listings
     ]
 

@@ -59,7 +59,7 @@ def search_listings_in_db(req: SearchRequest, limit: int = 20) -> List[DatabaseL
     max_lon = req.longitude + LON_DELTA
 
     # Call the RPC function
-    match_threshold = 0.70  # tune this (0–1)
+    match_threshold = 0.40  # tune this (0–1)
 
     query = supabase.rpc(
         "match_listings_with_filters",
