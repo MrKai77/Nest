@@ -8,24 +8,24 @@
 import SwiftUI
 
 /// Loosely based off of https://stackoverflow.com/questions/62587261/how-to-create-a-two-handle-range-slider
-struct RangedSliderView<Label, V>: View where Label: View, V: BinaryFloatingPoint {
+struct RangedSliderView<V>: View where V: BinaryFloatingPoint {
     @Environment(\.colorScheme) var colorScheme
     
     let currentValue: Binding<ClosedRange<V>>
     let sliderBounds: ClosedRange<V>
     let step: V
-    let label: (_ value: V) -> Label
+//    let label: (_ value: V) -> Label
     
     public init(
         value: Binding<ClosedRange<V>>,
         bounds: ClosedRange<V>,
         step: V = 1,
-        @ViewBuilder label: @escaping (_ value: V) -> Label
+//        @ViewBuilder label: @escaping (_ value: V) -> Label
     ) {
         self.currentValue = value
         self.sliderBounds = bounds
         self.step = step
-        self.label = label
+//        self.label = label
     }
     
     var body: some View {
@@ -33,8 +33,9 @@ struct RangedSliderView<Label, V>: View where Label: View, V: BinaryFloatingPoin
             sliderView(sliderSize: geometry.size)
         }
         // Thse paddings compensate for the top and bottom of the slider thumbs
-        .padding(.top, 30)
-        .padding(.bottom, 4)
+//        .padding(.vertical, 30)
+        .frame(height: 30)
+        .padding(.horizontal, -6)
         .fixedSize(horizontal: false, vertical: true)
     }
     
@@ -45,9 +46,11 @@ struct RangedSliderView<Label, V>: View where Label: View, V: BinaryFloatingPoin
         let stepWidthInPixels = sliderSize.width / CGFloat(totalSteps)
         
         ZStack {
-            RoundedRectangle(cornerRadius: 2)
-                .foregroundStyle(.tertiary)
-                .frame(height: 4)
+            Capsule()
+                .foregroundStyle(.quinary.opacity(0.6))
+                .frame(height: 6)
+                .padding(.leading, -6)
+                .padding(.trailing, -24)
             
             let leftThumbX = CGFloat((currentValue.wrappedValue.lowerBound - sliderBounds.lowerBound) / step) * stepWidthInPixels + 12
             let rightThumbX = CGFloat((currentValue.wrappedValue.upperBound - sliderBounds.lowerBound) / step) * stepWidthInPixels + 6
@@ -60,7 +63,8 @@ struct RangedSliderView<Label, V>: View where Label: View, V: BinaryFloatingPoin
             // Left Thumb
             thumbView(
                 position: CGPoint(x: leftThumbX, y: sliderViewYCenter),
-                value: currentValue.wrappedValue.lowerBound
+                value: currentValue.wrappedValue.lowerBound,
+                onTop: true
             )
             .highPriorityGesture(
                 DragGesture()
@@ -78,7 +82,8 @@ struct RangedSliderView<Label, V>: View where Label: View, V: BinaryFloatingPoin
             // Right Thumb
             thumbView(
                 position: CGPoint(x: rightThumbX, y: sliderViewYCenter),
-                value: currentValue.wrappedValue.upperBound
+                value: currentValue.wrappedValue.upperBound,
+                onTop: false
             )
             .highPriorityGesture(
                 DragGesture()
@@ -100,16 +105,16 @@ struct RangedSliderView<Label, V>: View where Label: View, V: BinaryFloatingPoin
             path.move(to: from)
             path.addLine(to: to)
         }
-        .stroke(Color.accentColor, lineWidth: 4)
+        .stroke(Color.accentColor, lineWidth: 6)
     }
     
-    private func thumbView(position: CGPoint, value: V) -> some View {
+    private func thumbView(position: CGPoint, value: V, onTop: Bool) -> some View {
         ZStack {
-            label(value)
-                .offset(y: -25)
+//            label(value)
+//                .offset(y: 25 * (onTop ? -1.0 : 1.0))
             
             Capsule()
-                .frame(width: 24, height: 18)
+                .frame(width: 36, height: 24)
                 .foregroundStyle(colorScheme == .dark ? .white : .accentColor)
                 .contentShape(Rectangle())
         }
@@ -124,9 +129,10 @@ struct RangedSliderView<Label, V>: View where Label: View, V: BinaryFloatingPoin
         value: $selection,
         bounds: 0...100,
         step: 5
-    ) { value in
-        Text("\(value)")
-            .font(.callout)
-    }
+    )
+//    ) { value in
+//        Text("\(value)")
+//            .font(.callout)
+//    }
     .padding(12)
 }
