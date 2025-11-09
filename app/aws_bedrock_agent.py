@@ -124,66 +124,64 @@ class awsBedrockAgent:
             inserted["weighted_score"] = json.loads(ws)
         return DatabaseListing(**inserted)
 
-    def regenerate_all_embeddings(self) -> dict[str, Any]:
+    # def regenerate_all_embeddings(self) -> dict[str, Any]:
 
-        summary = {"updated": 0, "failed": []}
-        try:
-            resp = self.supabase.table("listings").select("*").execute()
-        except APIError as e:
-            raise RuntimeError(f"Supabase select error: {e}") from e
+    #     summary = {"updated": 0, "failed": []}
+    #     try:
+    #         resp = self.supabase.table("listings").select("*").execute()
+    #     except APIError as e:
+    #         raise RuntimeError(f"Supabase select error: {e}") from e
 
-        rows: list[dict[str, Any]] = resp.data or []
-        for row in rows:
-            try:
-                # Build a CreateListingRequest-like object for embedding reuse
-                # Required fields (raise if missing)
-                try:
-                    price: float = float(row["price"])  # type: ignore[arg-type]
-                    longitude: float = float(row["longitude"])  # type: ignore[arg-type]
-                    latitude: float = float(row["latitude"])  # type: ignore[arg-type]
-                    address: str = str(row["address"])  # type: ignore[arg-type]
-                    date_listed: str = str(row["date_listed"])  # type: ignore[arg-type]
-                except KeyError as ke:
-                    summary["failed"].append(row.get("id", "unknown"))
-                    continue
+    #     rows: list[dict[str, Any]] = resp.data or []
+    #     for row in rows:
+    #         try:
+    #             # Build a CreateListingRequest-like object for embedding reuse
+    #             # Required fields (raise if missing)
+    #             try:
+    #                 price: float = float(row["price"])  # type: ignore[arg-type]
+    #                 longitude: float = float(row["longitude"])  # type: ignore[arg-type]
+    #                 latitude: float = float(row["latitude"])  # type: ignore[arg-type]
+    #                 address: str = str(row["address"])  # type: ignore[arg-type]
+    #                 date_listed: str = str(row["date_listed"])  # type: ignore[arg-type]
+    #             except KeyError as ke:
+    #                 summary["failed"].append(row.get("id", "unknown"))
+    #                 continue
 
-                req = CreateListingRequest(
-                    price=price,
-                    date_listed=date_listed,
-                    image_url=row.get("image_url"),
-                    longitude=longitude,
-                    latitude=latitude,
-                    address=address,
-                    square_footage=row.get("square_footage"),
-                    bathroom_num=row.get("bathroom_num"),
-                    bedrooms_num=row.get("bedrooms_num"),
-                    backyard=row.get("backyard"),
-                    garage=row.get("garage"),
-                    description=row.get("description"),
-                )
-                embedding = self.get_embedding(req)
-                update_resp = self.supabase.table("listings").update({"weighted_score": embedding}).eq("id", row["id"]).execute()
-                if update_resp.data:
-                    summary["updated"] += 1
-                    try:
-                        print(f"[{row['id']}] updated")
-                    except Exception:
-                        pass
-                else:
-                    summary["failed"].append(row["id"])
-                    try:
-                        print(f"[{row['id']}] failed update")
-                    except Exception:
-                        pass
-            except Exception as e:  # broad catch per-item
-                summary["failed"].append(row.get("id", "unknown"))
-                try:
-                    rid = row.get("id", "unknown")
-                    print(f"[{rid}] failed: {e}")
-                except Exception:
-                    pass
-        return summary
-        
-
+    #             req = CreateListingRequest(
+    #                 price=price,
+    #                 date_listed=date_listed,
+    #                 image_url=row.get("image_url"),
+    #                 longitude=longitude,
+    #                 latitude=latitude,
+    #                 address=address,
+    #                 square_footage=row.get("square_footage"),
+    #                 bathroom_num=row.get("bathroom_num"),
+    #                 bedrooms_num=row.get("bedrooms_num"),
+    #                 backyard=row.get("backyard"),
+    #                 garage=row.get("garage"),
+    #                 description=row.get("description"),
+    #             )
+    #             embedding = self.get_embedding(req)
+    #             update_resp = self.supabase.table("listings").update({"weighted_score": embedding}).eq("id", row["id"]).execute()
+    #             if update_resp.data:
+    #                 summary["updated"] += 1
+    #                 try:
+    #                     print(f"[{row['id']}] updated")
+    #                 except Exception:
+    #                     pass
+    #             else:
+    #                 summary["failed"].append(row["id"])
+    #                 try:
+    #                     print(f"[{row['id']}] failed update")
+    #                 except Exception:
+    #                     pass
+    #         except Exception as e:  # broad catch per-item
+    #             summary["failed"].append(row.get("id", "unknown"))
+    #             try:
+    #                 rid = row.get("id", "unknown")
+    #                 print(f"[{rid}] failed: {e}")
+    #             except Exception:
+    #                 pass
+    #     return summary
     
 bedrock_embedding_agent = awsBedrockAgent()

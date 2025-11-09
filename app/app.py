@@ -4,8 +4,7 @@ from dotenv import load_dotenv
 # Must happen BEFORE importing modules that read environment variables at import-time
 load_dotenv()
 
-import os
-from fastapi import FastAPI, Body, HTTPException, Header
+from fastapi import FastAPI, Body, HTTPException
 from fastapi.responses import PlainTextResponse
 
 
