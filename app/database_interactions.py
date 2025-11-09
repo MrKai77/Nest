@@ -1,9 +1,9 @@
 import os
 import json
-from typing import List
+from typing import Any, Dict, List, Optional, Union
 from supabase import create_client, Client
-from .schemas import DatabaseListing, SearchRequest, CreateListingRequest
-from .aws_bedrock_agent import bedrock_embedding_agent
+from schemas import DatabaseListing, SearchRequest, CreateListingRequest
+from aws_bedrock_agent import bedrock_embedding_agent
 from postgrest.exceptions import APIError
 
 SUPABASE_URL = os.environ["SUPABASE_URL"]
@@ -81,11 +81,13 @@ def search_listings_in_db(req: SearchRequest, limit: int = 20) -> List[DatabaseL
     except APIError as e:
         raise RuntimeError(f"Supabase query error: {e}") from e
     
-    rows = resp.data or []
+    raw_rows: Any = resp.data or []
+    # Coerce only list-of-dict payloads; otherwise treat as empty list
+    rows: List[Dict[str, Any]] = raw_rows if isinstance(raw_rows, list) else []
 
-    clean_rows = []
+    clean_rows: List[Dict[str, Any]] = []
     for row in rows:
-        ws = row.get("weighted_score")
+        ws: Optional[Union[str, List[float]]] = row.get("weighted_score")
         if isinstance(ws, str):
             try:
                 row["weighted_score"] = json.loads(ws)

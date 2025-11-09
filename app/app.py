@@ -1,13 +1,19 @@
+from dotenv import load_dotenv
+
+# Load environment variables from a local .env file if present
+# Must happen BEFORE importing modules that read environment variables at import-time
+load_dotenv()
+
 from fastapi import FastAPI, Body, HTTPException
 from fastapi.responses import PlainTextResponse
 
 
 from pydantic import BaseModel
 from typing import List, Optional
-from .schemas import *
+from schemas import *
 
-from .database_interactions import search_listings_in_db, delete_listing_in_db
-from .aws_bedrock_agent import bedrock_embedding_agent
+from database_interactions import search_listings_in_db, delete_listing_in_db
+from aws_bedrock_agent import bedrock_embedding_agent
 
 app = FastAPI()
 

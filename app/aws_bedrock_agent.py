@@ -1,12 +1,12 @@
 import os
 import json
 import uuid
-from typing import *
+from typing import Any, Dict, List, Optional, Union
 import boto3
 from postgrest.exceptions import APIError
 
 from supabase import create_client, Client
-from .schemas import CreateListingRequest, DatabaseListing
+from schemas import CreateListingRequest, DatabaseListing
 
 
 class awsBedrockAgent:
@@ -73,20 +73,20 @@ class awsBedrockAgent:
     
     def encode_and_store_listing(self, listing: CreateListingRequest) -> DatabaseListing:
         
-        embedding = self.get_embedding(listing)
-        row = listing.model_dump(by_alias=True)
+        embedding: List[float] = self.get_embedding(listing)
+        row: Dict[str, Any] = listing.model_dump(by_alias=True)
         row["weighted_score"] = embedding
 
         try:
-            resp = self.supabase.table("listings").insert(row).execute()
+            resp: Any = self.supabase.table("listings").insert(row).execute()
         except APIError as e:
             raise RuntimeError(f"Supabase insert error: {e}") from e
         
         if not resp.data:
             raise RuntimeError("Supabase insert returned no data")
 
-        inserted = resp.data[0]
-        ws = inserted.get("weighted_score")
+        inserted: Dict[str, Any] = resp.data[0]
+        ws: Optional[Union[str, List[float]]] = inserted.get("weighted_score")
 
         if isinstance(ws, str):
             inserted["weighted_score"] = json.loads(ws)
