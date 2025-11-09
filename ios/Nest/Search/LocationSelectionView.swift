@@ -12,6 +12,7 @@ import MapKit
 
 struct LocationSelectionView: View {
     @Binding var location: PlaceDescriptor?
+    let showCircle: Bool
     
     @State private var selectedItem: MapFeature?
     @State private var cameraPosition: MapCameraPosition = .automatic
@@ -26,7 +27,7 @@ struct LocationSelectionView: View {
         ) {
             UserAnnotation()
             
-            if let coordinate = selectedItem?.coordinate {
+            if showCircle, let coordinate = selectedItem?.coordinate {
                 MapCircle(center: coordinate, radius: circleRadius)
                     .foregroundStyle(.blue.opacity(0.2))
                     .stroke(.blue, lineWidth: 2)
@@ -68,7 +69,8 @@ struct LocationSelectionView: View {
 
     VStack {
         LocationSelectionView(
-            location: $place
+            location: $place,
+            showCircle: true
         )
     }
 }

@@ -94,11 +94,9 @@ struct SelectionView: View {
     }
 
     var body: some View {
-        ScrollView {
+        NavigationStack {
             VStack {
                 settings
-                    .padding(.top, -24)
-                    .frame(height: 840)
                 
                 Button {
                     nestManager.computeSearchResults()
@@ -110,17 +108,16 @@ struct SelectionView: View {
                 .padding()
                 .buttonSizing(.flexible)
                 .buttonStyle(.glassProminent)
-                .padding(.top, -48)
             }
+            .navigationTitle("Search Listings")
         }
-        .navigationTitle("Search Listings")
        
     }
 
     private var settings: some View {
         Form {
             Section {
-                LocationSelectionView(location: placeDescriptorBinding)
+                LocationSelectionView(location: placeDescriptorBinding, showCircle: true)
                     .clipShape(
                         .rect(cornerRadius: 8)
                     )
@@ -205,6 +202,5 @@ struct SelectionView: View {
         }
         .formStyle(.grouped)
         .scrollContentBackground(.hidden)
-        .scrollDisabled(true)
     }
 }

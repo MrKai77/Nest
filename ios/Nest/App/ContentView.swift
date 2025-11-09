@@ -47,7 +47,7 @@ struct ContentView: View {
             }
             
             Tab("My Listings", systemImage: "storefront", value: .publishedListings) {
-                EmptyView()
+                NewListingView()
             }
             
             Tab("Profile", systemImage: "person", value: .profile) {
