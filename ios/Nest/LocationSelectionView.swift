@@ -10,9 +10,6 @@ import SwiftUI
 import GeoToolbox
 import MapKit
 
-import SwiftUI
-import MapKit
-
 struct LocationSelectionView: View {
     @Binding var location: PlaceDescriptor?
     

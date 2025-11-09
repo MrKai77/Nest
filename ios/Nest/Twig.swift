@@ -11,20 +11,20 @@ import Foundation
 
 struct SearchRequest: Codable {
     // Required
-    let address: String
-    let longitude: Double
-    let latitude: Double
+    var address: String
+    var longitude: Double
+    var latitude: Double
     
     // Optional amenities
-    let squareFootage: Int?
-    let bathroomNum: Int?
-    let bedroomsNum: Int?
-    let backyard: Bool?
-    let garage: Bool?
+    var squareFootage: Int?
+    var bathroomNum: Int?
+    var bedroomsNum: Int?
+    var backyard: Bool?
+    var garage: Bool?
     
     // Optional price range
-    let minPrice: Double?
-    let maxPrice: Double?
+    var minPrice: Double?
+    var maxPrice: Double?
     
     enum CodingKeys: String, CodingKey {
         case address
