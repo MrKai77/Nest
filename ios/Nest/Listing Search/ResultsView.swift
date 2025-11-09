@@ -12,17 +12,21 @@ struct ResultsView: View {
     
     var body: some View {
         ScrollView {
-            VStack {
-                ForEach(nestManager.searchResults) { result in
+            VStack(spacing: 16) {
+                ForEach(nestManager.searchResults.enumerated(), id: \.offset) { index, result in
                     Button {
                         nestManager.push(tab: .listingDetail(result))
                     } label: {
                         ListingView(listing: result)
                     }
                     .buttonStyle(.plain)
+                    .padding(.horizontal, 18)
+                    
+                    if index != nestManager.searchResults.count - 1 {
+                        Divider()
+                    }
                 }
             }
-            .padding(.horizontal, 12)
         }
         .navigationTitle("Results")
     }

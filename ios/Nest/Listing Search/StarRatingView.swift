@@ -24,7 +24,7 @@ struct StarRatingView: View {
         HStack(spacing: 6) {
             ForEach(1...maxStars, id: \.self) { index in
                 Image(systemName: index <= rating ? "star.fill" : "star")
-                    .foregroundStyle(.yellow)
+                    .foregroundStyle(.rating)
             }
         }
     }

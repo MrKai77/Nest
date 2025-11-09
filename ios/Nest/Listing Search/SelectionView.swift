@@ -114,6 +114,7 @@ struct SelectionView: View {
             }
         }
         .navigationTitle("Search Listings")
+       
     }
     
     private var settings: some View {

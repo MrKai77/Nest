@@ -122,7 +122,8 @@ struct RangedSliderView<V>: View where V: BinaryFloatingPoint {
             
             Capsule()
                 .frame(width: 36, height: 24)
-                .foregroundStyle(colorScheme == .dark ? .white : .accentColor)
+                .foregroundStyle(.white)
+                .shadow(radius: 5)
                 .contentShape(Rectangle())
                 .scaleEffect(scale)
         }

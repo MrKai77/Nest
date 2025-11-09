@@ -15,12 +15,10 @@ struct ListingDetailView: View {
         ScrollView {
             VStack(alignment: .leading) {
                 Rectangle()
-                    .frame(height: 300)
+                    .frame(height: 350)
                     .foregroundStyle(.quaternary)
                     .overlay {
-                        AsyncImage(
-                            url: listing.imageUrl
-                        ) { phase in
+                        AsyncImage(url: listing.imageUrl) { phase in
                             switch phase {
                             case .empty:
                                 ProgressView()
@@ -28,14 +26,19 @@ struct ListingDetailView: View {
                                 image
                                     .resizable()
                                     .scaledToFill()
-                            case .failure(_):
-                                ProgressView()
+                                    .frame(maxWidth: .infinity)
+                                    .clipped()
+                            case .failure:
+                                Image(systemName: "photo")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .padding()
+                                    .foregroundStyle(.secondary)
                             @unknown default:
-                                ProgressView()
+                                EmptyView()
                             }
                         }
                     }
-                    .clipped()
                 
                 VStack(alignment: .leading) {
                     VStack(alignment: .leading, spacing: 4) {
@@ -64,9 +67,30 @@ struct ListingDetailView: View {
                         VStack(alignment: .leading) {
                             let hasBackyard = listing.backyard == true // Removes optional
                             let hasGarage = listing.garage == true // Removes optional
+
+                            HStack {
+                                if hasBackyard {
+                                    Image(systemName: "checkmark.circle")
+                                        .foregroundStyle(.nestGreen)
+                                } else {
+                                    Image(systemName: "xmark.circle")
+                                        .foregroundStyle(.nestRed)
+                                }
+                                
+                                Text("Backyard")
+                            }
                             
-                            Text("\(Image(systemName: "\(hasBackyard ? "checkmark" : "xmark").circle")) Backyard")
-                            Text("\(Image(systemName: "\(hasGarage ? "checkmark" : "xmark").circle")) Garage")
+                            HStack {
+                                if hasGarage {
+                                    Image(systemName: "checkmark.circle")
+                                        .foregroundStyle(.nestGreen)
+                                } else {
+                                    Image(systemName: "xmark.circle")
+                                        .foregroundStyle(.nestRed)
+                                }
+                                
+                                Text("Garage")
+                            }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
@@ -96,21 +120,27 @@ struct ListingDetailView: View {
                 .padding(12)
             }
         }
+        .ignoresSafeArea()
         .safeAreaBar(edge: .bottom) {
-            // Spread the payment across roughly 300 months for a rental price
-            let price = Text(listing.price / 300, format: .number.precision(.fractionLength(0)))
+            let price = Text(listing.pricePerMonth, format: .number.precision(.fractionLength(0)))
 
-            Button {
-                nestManager.popToRoot()
-            } label: {
-                Text("Rent for $\(price)/month…")
-                    .padding(6)
-                    .bold()
+            VStack {
+                Button {
+                    nestManager.popToRoot()
+                } label: {
+                    Text("Rent for $\(price)/month…")
+                        .padding(6)
+                        .bold()
+                }
+                .buttonSizing(.flexible)
+                .buttonStyle(.glassProminent)
+                
+                Text("Your personal information will stay completely private from the seller, ensuring a fair and unbiased process. \(Text("Learn more…").foregroundStyle(.accent))")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
             }
             .padding()
-            .buttonSizing(.flexible)
-            .buttonStyle(.glassProminent)
-            .padding(.top, -48)
         }
     }
 }
