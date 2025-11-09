@@ -84,7 +84,11 @@ struct ListingView: View {
             .foregroundStyle(.secondary)
             .font(.caption)
             
+            Divider()
             
+            Text("Last updated: \(Text(listing.dateListed, format: .dateTime))")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
         }
         .frame(height: 300)
         .padding(8)
