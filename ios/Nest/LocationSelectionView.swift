@@ -10,21 +10,14 @@ import SwiftUI
 import GeoToolbox
 import MapKit
 
-import SwiftUI
-import MapKit
-
 struct LocationSelectionView: View {
     @Binding var location: PlaceDescriptor?
     
     @State private var selectedItem: MapFeature?
-    @State private var cameraPosition: MapCameraPosition = .region(
-        MKCoordinateRegion(
-            center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194), // San Francisco
-            span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1) // city-level zoom
-        )
-    )
+    @State private var cameraPosition: MapCameraPosition = .automatic
     
     private let locationManager = CLLocationManager()
+    private let circleRadius: CLLocationDistance = 3000
     
     var body: some View {
         Map(
@@ -32,11 +25,13 @@ struct LocationSelectionView: View {
             selection: $selectedItem
         ) {
             UserAnnotation()
+            
+            if let coordinate = selectedItem?.coordinate {
+                MapCircle(center: coordinate, radius: circleRadius)
+                    .foregroundStyle(.blue.opacity(0.2))
+                    .stroke(.blue, lineWidth: 2)
+            }
         }
-        .mapControls {
-            MapUserLocationButton()
-        }
-        .contentMargins(12)
         .onAppear {
             locationManager.requestWhenInUseAuthorization()
             
