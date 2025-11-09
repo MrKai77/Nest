@@ -4,10 +4,10 @@ from fastapi.responses import PlainTextResponse
 
 from pydantic import BaseModel
 from typing import List, Optional
-from app.schemas import *
+from .schemas import *
 
-from app.database_interactions import search_listings_in_db, delete_listing_in_db
-from app.aws_bedrock_agent import bedrock_embedding_agent
+from .database_interactions import search_listings_in_db, delete_listing_in_db
+from .aws_bedrock_agent import bedrock_embedding_agent
 
 app = FastAPI()
 
