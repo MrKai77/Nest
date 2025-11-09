@@ -118,7 +118,6 @@ struct RangedSliderView<V>: View where V: BinaryFloatingPoint {
 //                .offset(y: 25 * (onTop ? -1.0 : 1.0))
             
             let scale = min(1, max(0.4, (distance / 36) - 0.1))
-            let _ = print(scale)
             
             Capsule()
                 .frame(width: 36, height: 24)

@@ -9,7 +9,6 @@ import SwiftUI
 
 struct ContentView: View {
     let coordinator = NestCoordinator()
-    let nestManager = NestSearchManager()
 
     var body: some View {
 //        VStack {
@@ -44,7 +43,7 @@ struct ContentView: View {
         
         TabView(selection: $coordinator.currentTab) {
             Tab("Search", systemImage: "magnifyingglass", value: .search) {
-                searchTab
+                SearchView()
             }
             
             Tab("My Listings", systemImage: "storefront", value: .publishedListings) {
@@ -55,31 +54,6 @@ struct ContentView: View {
                 EmptyView()
             }
         }
-    }
-    
-    @ViewBuilder
-    private var searchTab: some View {
-        @Bindable var nestManager = nestManager
-        NavigationStack(path: $nestManager.path) {
-            nestManager.build(state: .search)
-                .navigationDestination(for: NestSearchState.self) { tab in
-                    nestManager.build(state: tab)
-                        .background(content: background)
-                }
-                .background(content: background)
-        }
-    }
-    
-    private func background() -> some View {
-        LinearGradient(
-            colors: [
-                .accent.opacity(0.1),
-                .accent.opacity(0.05),
-            ],
-            startPoint: .top,
-            endPoint: .bottom
-        )
-        .ignoresSafeArea()
     }
 }
 
