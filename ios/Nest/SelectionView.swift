@@ -15,7 +15,9 @@ struct SelectionView: View {
     @State var currentSearchRequest: SearchRequest = .init(
         address: "2500 University Drive NW",
         longitude: 51.0786839,
-        latitude: -114.1355565
+        latitude: -114.1355565,
+        minPrice: 3e5,
+        maxPrice: 4e5
     )
     
     private var placeDescriptorBinding: Binding<PlaceDescriptor?> {

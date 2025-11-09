@@ -55,6 +55,8 @@ struct RangedSliderView<V>: View where V: BinaryFloatingPoint {
             let leftThumbX = CGFloat((currentValue.wrappedValue.lowerBound - sliderBounds.lowerBound) / step) * stepWidthInPixels + 12
             let rightThumbX = CGFloat((currentValue.wrappedValue.upperBound - sliderBounds.lowerBound) / step) * stepWidthInPixels + 6
             
+            let distanceX = rightThumbX - leftThumbX
+            
             lineBetweenThumbs(
                 from: CGPoint(x: leftThumbX, y: sliderViewYCenter),
                 to: CGPoint(x: rightThumbX, y: sliderViewYCenter)
@@ -64,7 +66,8 @@ struct RangedSliderView<V>: View where V: BinaryFloatingPoint {
             thumbView(
                 position: CGPoint(x: leftThumbX, y: sliderViewYCenter),
                 value: currentValue.wrappedValue.lowerBound,
-                onTop: true
+                onTop: true,
+                distance: distanceX
             )
             .highPriorityGesture(
                 DragGesture()
@@ -83,7 +86,8 @@ struct RangedSliderView<V>: View where V: BinaryFloatingPoint {
             thumbView(
                 position: CGPoint(x: rightThumbX, y: sliderViewYCenter),
                 value: currentValue.wrappedValue.upperBound,
-                onTop: false
+                onTop: false,
+                distance: distanceX
             )
             .highPriorityGesture(
                 DragGesture()
@@ -108,15 +112,19 @@ struct RangedSliderView<V>: View where V: BinaryFloatingPoint {
         .stroke(Color.accentColor, lineWidth: 6)
     }
     
-    private func thumbView(position: CGPoint, value: V, onTop: Bool) -> some View {
+    private func thumbView(position: CGPoint, value: V, onTop: Bool, distance: Double) -> some View {
         ZStack {
 //            label(value)
 //                .offset(y: 25 * (onTop ? -1.0 : 1.0))
+            
+            let scale = min(1, max(0.4, (distance / 36) - 0.1))
+            let _ = print(scale)
             
             Capsule()
                 .frame(width: 36, height: 24)
                 .foregroundStyle(colorScheme == .dark ? .white : .accentColor)
                 .contentShape(Rectangle())
+                .scaleEffect(scale)
         }
         .position(x: position.x, y: position.y)
     }

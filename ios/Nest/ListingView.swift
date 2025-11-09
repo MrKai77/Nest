@@ -25,7 +25,7 @@ struct ListingView: View {
                             image
                                 .resizable()
                                 .scaledToFill()
-                        case .failure(let error):
+                        case .failure(_):
                             ProgressView()
                         @unknown default:
                             ProgressView()

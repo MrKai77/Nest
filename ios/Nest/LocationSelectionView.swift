@@ -32,10 +32,6 @@ struct LocationSelectionView: View {
                     .stroke(.blue, lineWidth: 2)
             }
         }
-//        .mapControls {
-//            MapUserLocationButton()
-//        }
-        .contentMargins(12)
         .onAppear {
             locationManager.requestWhenInUseAuthorization()
             
