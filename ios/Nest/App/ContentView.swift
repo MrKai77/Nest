@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
-    let nestManager = NestManager()
+    let coordinator = NestCoordinator()
+    let nestManager = NestSearchManager()
 
     var body: some View {
 //        VStack {
@@ -39,12 +40,30 @@ struct ContentView: View {
 //                }
 //            }
 //        }
+        @Bindable var coordinator = coordinator
         
+        TabView(selection: $coordinator.currentTab) {
+            Tab("Search", systemImage: "magnifyingglass", value: .search) {
+                searchTab
+            }
+            
+            Tab("My Listings", systemImage: "storefront", value: .publishedListings) {
+                EmptyView()
+            }
+            
+            Tab("Profile", systemImage: "person", value: .profile) {
+                EmptyView()
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var searchTab: some View {
         @Bindable var nestManager = nestManager
         NavigationStack(path: $nestManager.path) {
-            nestManager.build(tab: .search)
-                .navigationDestination(for: NestTab.self) { tab in
-                    nestManager.build(tab: tab)
+            nestManager.build(state: .search)
+                .navigationDestination(for: NestSearchState.self) { tab in
+                    nestManager.build(state: tab)
                         .background(content: background)
                 }
                 .background(content: background)

@@ -11,7 +11,7 @@ import GeoToolbox
 import MapKit
 
 struct SelectionView: View {
-    let nestManager: NestManager
+    let nestManager: NestSearchManager
     
     private var placeDescriptorBinding: Binding<PlaceDescriptor?> {
         .init(
@@ -116,7 +116,7 @@ struct SelectionView: View {
         .navigationTitle("Search Listings")
        
     }
-    
+
     private var settings: some View {
         Form {
             Section {

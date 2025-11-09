@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct ResultsView: View {
-    let nestManager: NestManager
+    let nestManager: NestSearchManager
     
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
                 ForEach(nestManager.searchResults.enumerated(), id: \.offset) { index, result in
                     Button {
-                        nestManager.push(tab: .listingDetail(result))
+                        nestManager.push(state: .listingDetail(result))
                     } label: {
                         ListingView(listing: result)
                     }

@@ -1,5 +1,5 @@
 //
-//  NestTab.swift
+//  NestSearchManager.swift
 //  Nest
 //
 //  Created by Kai Azim on 2025-11-08.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum NestTab: Identifiable, Hashable {
+enum NestSearchState: Identifiable, Hashable {
     case search
     case results
     case listingDetail(Listing)
@@ -22,7 +22,7 @@ enum NestTab: Identifiable, Hashable {
 }
 
 @Observable
-class NestManager {
+class NestSearchManager {
     var path: NavigationPath = NavigationPath()
 
     var searchRequest: SearchRequest = .init(
@@ -39,12 +39,12 @@ class NestManager {
     func computeSearchResults() {
         Task {
             searchResults = try await twig.searchListings(searchRequest)
-            push(tab: .results)
+            push(state: .results)
         }
     }
     
-    func push(tab: NestTab) {
-        path.append(tab)
+    func push(state: NestSearchState) {
+        path.append(state)
     }
     
     func pop() {
@@ -56,8 +56,8 @@ class NestManager {
     }
 
     @ViewBuilder
-    func build(tab: NestTab) -> some View {
-        switch tab {
+    func build(state: NestSearchState) -> some View {
+        switch state {
         case .search: SelectionView(nestManager: self)
         case .results: ResultsView(nestManager: self)
         case .listingDetail(let listing): ListingDetailView(nestManager: self, listing: listing)

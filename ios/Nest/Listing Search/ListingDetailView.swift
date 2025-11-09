@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ListingDetailView: View {
-    let nestManager: NestManager
+    let nestManager: NestSearchManager
     let listing: Listing
 
     var body: some View {
