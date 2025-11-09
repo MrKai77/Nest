@@ -38,6 +38,19 @@ final class Twig {
         let encoder = JSONEncoder()
         request.httpBody = try encoder.encode(searchRequest)
         
+        if let body = request.httpBody,
+           let bodyString = String(data: body, encoding: .utf8) {
+            var curl = "curl -X \(request.httpMethod ?? "POST") '\(url.absoluteString)'"
+            if let headers = request.allHTTPHeaderFields {
+                for (key, value) in headers {
+                    curl += " -H '\(key): \(value)'"
+                }
+            }
+            curl += " -d '\(bodyString)'"
+            print("📡 cURL:\n\(curl)\n")
+        }
+
+
         let (data, response) = try await URLSession.shared.data(for: request)
         let status = (response as? HTTPURLResponse)?.statusCode ?? -1
         guard (200..<300).contains(status) else {

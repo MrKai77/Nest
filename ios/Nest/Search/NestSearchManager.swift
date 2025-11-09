@@ -46,7 +46,7 @@ class NestSearchManager {
         switch state {
         case .search: SelectionView(nestManager: self)
         case .results: ResultsView(nestManager: self)
-        case .listingDetail(let listing): ListingDetailView(nestManager: self, listing: listing)
+        case .listingDetail(let listing, let image): ListingDetailView(nestManager: self, listing: listing, image: image)
         }
     }
 }

@@ -14,9 +14,22 @@
 		2AA397A52EBFFF1400788EA7 /* Nest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Nest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		2AB22B7C2EC0AB8400292892 /* Exceptions for "Nest" folder in "Nest" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 2AA397A42EBFFF1400788EA7 /* Nest */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		2AA397A72EBFFF1400788EA7 /* Nest */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				2AB22B7C2EC0AB8400292892 /* Exceptions for "Nest" folder in "Nest" target */,
+			);
 			path = Nest;
 			sourceTree = "<group>";
 		};
@@ -273,6 +286,7 @@
 				DEVELOPMENT_TEAM = 5F967GYF84;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Nest/Info.plist;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Nest uses your location to show where you are on the map.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -307,6 +321,7 @@
 				DEVELOPMENT_TEAM = 5F967GYF84;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Nest/Info.plist;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Nest uses your location to show where you are on the map.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

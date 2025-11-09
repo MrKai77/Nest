@@ -10,6 +10,7 @@ import SwiftUI
 struct ListingDetailView: View {
     let nestManager: NestSearchManager
     let listing: Listing
+    let image: Image
 
     var body: some View {
         ScrollView {
@@ -18,26 +19,29 @@ struct ListingDetailView: View {
                     .frame(height: 350)
                     .foregroundStyle(.quaternary)
                     .overlay {
-                        AsyncImage(url: listing.imageUrl) { phase in
-                            switch phase {
-                            case .empty:
-                                ProgressView()
-                            case .success(let image):
-                                image
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(maxWidth: .infinity)
-                                    .clipped()
-                            case .failure:
-                                Image(systemName: "photo")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .padding()
-                                    .foregroundStyle(.secondary)
-                            @unknown default:
-                                EmptyView()
-                            }
-                        }
+//                        AsyncImage(url: listing.imageUrl) { phase in
+//                            switch phase {
+//                            case .empty:
+//                                ProgressView()
+//                            case .success(let image):
+//                                image
+//                                    .resizable()
+//                                    .scaledToFill()
+//                                    .frame(maxWidth: .infinity)
+//                                    .clipped()
+//                            case .failure:
+//                                Image(systemName: "photo")
+//                                    .resizable()
+//                                    .scaledToFit()
+//                                    .padding()
+//                                    .foregroundStyle(.secondary)
+//                            @unknown default:
+//                                EmptyView()
+//                            }
+//                        }
+                        image
+                            .resizable()
+                            .scaledToFill()
                     }
                 
                 VStack(alignment: .leading) {

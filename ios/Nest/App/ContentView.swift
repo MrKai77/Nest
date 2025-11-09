@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     let coordinator = NestCoordinator()
+    let twig = Twig()
 
     var body: some View {
 //        VStack {
@@ -23,16 +24,16 @@ struct ContentView: View {
 //                    try! await print(
 //                        twig.searchListings(
 //                            .init(
-//                                address: "119 William Street NW",
-//                                longitude: 100,
-//                                latitude: 100,
-//                                squareFootage: 0,
-//                                bathroomNum: 0,
-//                                bedroomsNum: 0,
-//                                backyard: nil,
-//                                garage: nil,
-//                                minPrice: 0,
-//                                maxPrice: 0
+//                                address: "880 Crowchild Tr NW",
+//                                longitude: -114.22050718668,
+//                                latitude: 51.0404559134111,
+//                                squareFootage: 3050,
+//                                bathroomNum: 4,
+//                                bedroomsNum: 5,
+//                                backyard: true,
+//                                garage: false,
+//                                minPrice: 1252000,
+//                                maxPrice: 1252300
 //                            )
 //                        )
 //                    )
@@ -48,10 +49,6 @@ struct ContentView: View {
             
             Tab("My Listings", systemImage: "storefront", value: .publishedListings) {
                 NewListingView()
-            }
-            
-            Tab("Profile", systemImage: "person", value: .profile) {
-                EmptyView()
             }
         }
     }

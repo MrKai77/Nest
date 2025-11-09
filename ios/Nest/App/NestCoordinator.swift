@@ -10,7 +10,6 @@ import SwiftUI
 enum NestTab {
     case search
     case publishedListings
-    case profile
 }
 
 @Observable

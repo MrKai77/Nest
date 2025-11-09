@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ListingView: View {
     let listing: Listing
+    let image: Image
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -16,22 +17,26 @@ struct ListingView: View {
                 Rectangle()
                     .foregroundStyle(.quaternary)
                     .overlay {
-                        AsyncImage(
-                            url: listing.imageUrl
-                        ) { phase in
-                            switch phase {
-                            case .empty:
-                                ProgressView()
-                            case .success(let image):
-                                image
-                                    .resizable()
-                                    .scaledToFill()
-                            case .failure(_):
-                                ProgressView()
-                            @unknown default:
-                                ProgressView()
-                            }
-                        }
+//                        AsyncImage(
+//                            url: listing.imageUrl
+//                        ) { phase in
+//                            switch phase {
+//                            case .empty:
+//                                ProgressView()
+//                            case .success(let image):
+//                                image
+//                                    .resizable()
+//                                    .scaledToFill()
+//                            case .failure(_):
+//                                ProgressView()
+//                            @unknown default:
+//                                ProgressView()
+//                            }
+//                        }
+                        
+                        image
+                            .resizable()
+                            .scaledToFill()
                     }
                     .clipShape(
                         .rect(
@@ -126,24 +131,24 @@ struct ListingView: View {
     }
 }
 
-#Preview {
-    VStack {
-        ListingView(
-            listing: Listing(
-                id: UUID().uuidString,
-                longitude: 54.01,
-                latitude: 49.22,
-                address: "119 William Street NW",
-                price: 899990,
-                dateListed: .now.addingTimeInterval(-3600),
-                imageUrl: URL(string: "https://www.bcre.com/uploads/agent-77/Haight_Ashury_San_Francisco_Home.jpg")!,
-                squareFootage: 1400,
-                bathroomNum: 2,
-                bedroomsNum: 1,
-                backyard: true,
-                garage: false
-            )
-        )
-        .padding(12)
-    }
-}
+//#Preview {
+//    VStack {
+//        ListingView(
+//            listing: Listing(
+//                id: UUID().uuidString,
+//                longitude: 54.01,
+//                latitude: 49.22,
+//                address: "119 William Street NW",
+//                price: 899990,
+//                dateListed: .now.addingTimeInterval(-3600),
+//                imageUrl: URL(string: "https://www.bcre.com/uploads/agent-77/Haight_Ashury_San_Francisco_Home.jpg")!,
+//                squareFootage: 1400,
+//                bathroomNum: 2,
+//                bedroomsNum: 1,
+//                backyard: true,
+//                garage: false
+//            )
+//        )
+//        .padding(12)
+//    }
+//}
