@@ -1,16 +1,15 @@
 //
-//  ListingDetailView.swift
+//  PublishedListingDetailView.swift
 //  Nest
 //
-//  Created by Kai Azim on 2025-11-08.
+//  Created by Kai Azim on 2025-11-09.
 //
 
 import SwiftUI
 
-struct ListingDetailView: View {
+struct PublishedListingDetailView: View {
     let exit: () -> Void
     let listing: Listing
-    let image: Image
 
     var body: some View {
         ScrollView {
@@ -19,29 +18,26 @@ struct ListingDetailView: View {
                     .frame(height: 350)
                     .foregroundStyle(.quaternary)
                     .overlay {
-//                        AsyncImage(url: listing.imageUrl) { phase in
-//                            switch phase {
-//                            case .empty:
-//                                ProgressView()
-//                            case .success(let image):
-//                                image
-//                                    .resizable()
-//                                    .scaledToFill()
-//                                    .frame(maxWidth: .infinity)
-//                                    .clipped()
-//                            case .failure:
-//                                Image(systemName: "photo")
-//                                    .resizable()
-//                                    .scaledToFit()
-//                                    .padding()
-//                                    .foregroundStyle(.secondary)
-//                            @unknown default:
-//                                EmptyView()
-//                            }
-//                        }
-                        image
-                            .resizable()
-                            .scaledToFill()
+                        AsyncImage(url: listing.imageUrl) { phase in
+                            switch phase {
+                            case .empty:
+                                ProgressView()
+                            case .success(let image):
+                                image
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(maxWidth: .infinity)
+                                    .clipped()
+                            case .failure:
+                                Image(systemName: "photo")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .padding()
+                                    .foregroundStyle(.secondary)
+                            @unknown default:
+                                EmptyView()
+                            }
+                        }
                     }
                 
                 VStack(alignment: .leading) {
@@ -126,13 +122,13 @@ struct ListingDetailView: View {
         }
         .ignoresSafeArea()
         .safeAreaBar(edge: .bottom) {
-            let price = Text(listing.pricePerMonth, format: .number.precision(.fractionLength(0)))
+            let price = Text(listing.price, format: .number.precision(.fractionLength(0)))
 
             VStack {
                 Button {
                     exit()
                 } label: {
-                    Text("Rent for $\(price)/month…")
+                    Text("Rent for $\(price)")
                         .padding(6)
                         .bold()
                 }

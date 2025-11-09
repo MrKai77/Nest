@@ -73,6 +73,7 @@ final class Twig {
         
         let encoder = JSONEncoder()
         encoder.keyEncodingStrategy = .convertToSnakeCase
+        encoder.dateEncodingStrategy = .iso8601
         request.httpBody = try encoder.encode(listingRequest)
         
         let (data, response) = try await URLSession.shared.data(for: request)

@@ -43,7 +43,7 @@ struct SelectionView: View {
         )
     }
     
-    private let priceRange: ClosedRange<Double> = 1e2...1e6
+    private let priceRange: ClosedRange<Double> = 1e2...1.8e6
     private var priceRangeBinding: Binding<ClosedRange<Double>> {
         .init(
             get: {

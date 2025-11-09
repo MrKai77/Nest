@@ -48,7 +48,7 @@ struct ContentView: View {
             }
             
             Tab("My Listings", systemImage: "storefront", value: .publishedListings) {
-                NewListingView()
+                MyListingsView()
             }
         }
     }

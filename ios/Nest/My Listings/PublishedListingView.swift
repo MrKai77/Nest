@@ -71,6 +71,7 @@ struct PublishedListingView: View {
                     
                     Text("\(Image(systemName: "clock.badge.fill")) Occupied unil \(formattedDate)")
                         .foregroundStyle(.nestGreen)
+                        .font(.caption)
                 }
             }
             

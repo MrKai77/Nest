@@ -60,6 +60,9 @@ struct ListingView: View {
                     Text("$\(price)/month")
                         .font(.headline.bold())
                 }
+                
+                Text("Fair price")
+                    .font(.caption)
             }
             
             VStack(alignment: .leading, spacing: 6) {
