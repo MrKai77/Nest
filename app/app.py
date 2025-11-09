@@ -4,7 +4,8 @@ from dotenv import load_dotenv
 # Must happen BEFORE importing modules that read environment variables at import-time
 load_dotenv()
 
-from fastapi import FastAPI, Body, HTTPException
+import os
+from fastapi import FastAPI, Body, HTTPException, Header
 from fastapi.responses import PlainTextResponse
 
 
@@ -61,3 +62,13 @@ def delete_listing(listing_id: str):
 
     # 204 response: empty body
     return
+
+
+# Only uncomment when needed, should not be exposed publicly in normal operation
+# @app.get("/reembed")
+# def regenerate_all_embeddings():
+#     """
+#     Recompute embeddings for all listings and overwrite weighted_score.
+#     """
+#     summary = bedrock_embedding_agent.regenerate_all_embeddings()
+#     return summary

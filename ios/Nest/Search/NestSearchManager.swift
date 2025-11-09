@@ -20,7 +20,7 @@ class NestSearchManager {
     )
     private(set) var searchResults: [Listing] = []
     
-    private var twig: Twig = .init() // TODO: use dependency injection/
+    private var twig: Twig = .init() // TODO: use dependency injection
     
     func computeSearchResults() {
         Task {

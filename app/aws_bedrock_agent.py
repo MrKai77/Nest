@@ -10,8 +10,6 @@ from schemas import CreateListingRequest, DatabaseListing
 
 
 class awsBedrockAgent:
-
-
     def __init__(self,
                   model_id: Optional[str] = None, 
                   region: Optional[str] = None,
@@ -28,32 +26,66 @@ class awsBedrockAgent:
         
 
     def _build_input_text(self, listing: CreateListingRequest) -> str:
-        parts: list[str] = []
+        def yn(v: Optional[bool]) -> Optional[str]:
+            if v is None:
+                return None
+            return "yes" if v else "no"
 
-        # natural language part
-        if listing.description:
-            parts.append(f"Description: {listing.description}")
+        # Priority is location and core structured features
+        priority_parts: list[str] = []
+        priority_parts.append(f"location lat:{listing.latitude:.6f} lon:{listing.longitude:.6f}")
+        priority_parts.append(f"price:{listing.price}")
 
-        # numeric/structured fields
-        parts.append(f"Price: {listing.price}")
-        parts.append(f"Location: lat {listing.latitude}, lon {listing.longitude}")
-        parts.append(f"Address: {listing.address}")
-
-        if listing.square_footage is not None:
-            parts.append(f"Square footage: {listing.square_footage}")
         if listing.bedrooms_num is not None:
-            parts.append(f"Bedrooms: {listing.bedrooms_num}")
+            priority_parts.append(f"bedrooms:{listing.bedrooms_num}")
         if listing.bathroom_num is not None:
-            parts.append(f"Bathrooms: {listing.bathroom_num}")
-        if listing.backyard is not None:
-            parts.append("Has backyard" if listing.backyard else "No backyard")
-        if listing.garage is not None:
-            parts.append("Has garage" if listing.garage else "No garage")
+            priority_parts.append(f"bathrooms:{listing.bathroom_num}")
+        if listing.square_footage is not None:
+            priority_parts.append(f"sqft:{listing.square_footage}")
+        by = yn(listing.backyard)
+        if by is not None:
+            priority_parts.append(f"backyard:{by}")
+        gr = yn(listing.garage)
+        if gr is not None:
+            priority_parts.append(f"garage:{gr}")
 
-        return ", ".join(parts)
+        # Light repetition of amenities to boost their influence slightly
+        amenity_boost = []
+        if listing.bedrooms_num is not None:
+            amenity_boost.append(f"bedrooms:{listing.bedrooms_num}")
+        if listing.bathroom_num is not None:
+            amenity_boost.append(f"bathrooms:{listing.bathroom_num}")
+        if listing.square_footage is not None:
+            amenity_boost.append(f"sqft:{listing.square_footage}")
+        if by is not None:
+            amenity_boost.append(f"backyard:{by}")
+        if gr is not None:
+            amenity_boost.append(f"garage:{gr}")
+
+        # Keep address and description but with lower weight
+        context_parts: list[str] = []
+        if listing.address:
+            # De-emphasize by labeling and not repeating
+            context_parts.append(f"address(low): {listing.address}")
+
+        if listing.description:
+            desc = listing.description.strip()
+            # Truncate to reduce impact of long descriptions
+            if len(desc) > 220:
+                desc = desc[:220] + "…"
+            context_parts.append(f"desc(low): {desc}")
+
+        sections = [
+            "PRIORITY " + " | ".join(priority_parts),
+        ]
+        if amenity_boost:
+            sections.append("AMENITIES " + " | ".join(amenity_boost))
+        if context_parts:
+            sections.append("CONTEXT " + " | ".join(context_parts))
+
+        return " \n ".join(sections)
 
     def get_embedding(self, listing: CreateListingRequest) -> List[float]:
-       
 
         input_text = self._build_input_text(listing)
 
@@ -91,6 +123,66 @@ class awsBedrockAgent:
         if isinstance(ws, str):
             inserted["weighted_score"] = json.loads(ws)
         return DatabaseListing(**inserted)
+
+    def regenerate_all_embeddings(self) -> dict[str, Any]:
+
+        summary = {"updated": 0, "failed": []}
+        try:
+            resp = self.supabase.table("listings").select("*").execute()
+        except APIError as e:
+            raise RuntimeError(f"Supabase select error: {e}") from e
+
+        rows: list[dict[str, Any]] = resp.data or []
+        for row in rows:
+            try:
+                # Build a CreateListingRequest-like object for embedding reuse
+                # Required fields (raise if missing)
+                try:
+                    price: float = float(row["price"])  # type: ignore[arg-type]
+                    longitude: float = float(row["longitude"])  # type: ignore[arg-type]
+                    latitude: float = float(row["latitude"])  # type: ignore[arg-type]
+                    address: str = str(row["address"])  # type: ignore[arg-type]
+                    date_listed: str = str(row["date_listed"])  # type: ignore[arg-type]
+                except KeyError as ke:
+                    summary["failed"].append(row.get("id", "unknown"))
+                    continue
+
+                req = CreateListingRequest(
+                    price=price,
+                    date_listed=date_listed,
+                    image_url=row.get("image_url"),
+                    longitude=longitude,
+                    latitude=latitude,
+                    address=address,
+                    square_footage=row.get("square_footage"),
+                    bathroom_num=row.get("bathroom_num"),
+                    bedrooms_num=row.get("bedrooms_num"),
+                    backyard=row.get("backyard"),
+                    garage=row.get("garage"),
+                    description=row.get("description"),
+                )
+                embedding = self.get_embedding(req)
+                update_resp = self.supabase.table("listings").update({"weighted_score": embedding}).eq("id", row["id"]).execute()
+                if update_resp.data:
+                    summary["updated"] += 1
+                    try:
+                        print(f"[{row['id']}] updated")
+                    except Exception:
+                        pass
+                else:
+                    summary["failed"].append(row["id"])
+                    try:
+                        print(f"[{row['id']}] failed update")
+                    except Exception:
+                        pass
+            except Exception as e:  # broad catch per-item
+                summary["failed"].append(row.get("id", "unknown"))
+                try:
+                    rid = row.get("id", "unknown")
+                    print(f"[{rid}] failed: {e}")
+                except Exception:
+                    pass
+        return summary
         
 
     

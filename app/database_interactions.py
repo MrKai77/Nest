@@ -44,7 +44,8 @@ def _fake_listing_from_search(req: SearchRequest) -> CreateListingRequest:
     )
 
 def search_listings_in_db(req: SearchRequest, limit: int = 20) -> List[DatabaseListing]:
-
+    
+    print("Searching listings in DB with request:", req)
 
     # Build 'query listing' and get embedding from Bedrock
     query_listing = _fake_listing_from_search(req)
@@ -59,7 +60,7 @@ def search_listings_in_db(req: SearchRequest, limit: int = 20) -> List[DatabaseL
     max_lon = req.longitude + LON_DELTA
 
     # Call the RPC function
-    match_threshold = 0.40  # tune this (0–1)
+    match_threshold = 0.30  # tune this (0–1)
 
     query = supabase.rpc(
         "match_listings_with_filters",
