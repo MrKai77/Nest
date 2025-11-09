@@ -10,41 +10,34 @@ import SwiftUI
 import GeoToolbox
 import MapKit
 
-
 struct SelectionView: View {
-    @State var currentSearchRequest: SearchRequest = .init(
-        address: "2500 University Drive NW",
-        longitude: 51.0786839,
-        latitude: -114.1355565,
-        minPrice: 3e5,
-        maxPrice: 4e5
-    )
+    let nestManager: NestManager
     
     private var placeDescriptorBinding: Binding<PlaceDescriptor?> {
         .init(
             get: {
                 let coordinate: CLLocationCoordinate2D = .init(
-                    latitude: currentSearchRequest.latitude,
-                    longitude: currentSearchRequest.longitude
+                    latitude: nestManager.searchRequest.latitude,
+                    longitude: nestManager.searchRequest.longitude
                 )
                 return .init(
                     representations: [
                         .coordinate(coordinate)
                     ],
-                    commonName: currentSearchRequest.address
+                    commonName: nestManager.searchRequest.address
                 )
             },
             set: { newDescriptor in
                 if let latitude = newDescriptor?.coordinate?.latitude {
-                    currentSearchRequest.latitude = latitude
+                    nestManager.searchRequest.latitude = latitude
                 }
                 
                 if let longitude = newDescriptor?.coordinate?.longitude {
-                    currentSearchRequest.longitude = longitude
+                    nestManager.searchRequest.longitude = longitude
                 }
                 
                 if let address = newDescriptor?.address {
-                    currentSearchRequest.address = address
+                    nestManager.searchRequest.address = address
                 }
             }
         )
@@ -54,11 +47,11 @@ struct SelectionView: View {
     private var priceRangeBinding: Binding<ClosedRange<Double>> {
         .init(
             get: {
-                (currentSearchRequest.minPrice ?? priceRange.lowerBound)...(currentSearchRequest.maxPrice ?? priceRange.upperBound)
+                (nestManager.searchRequest.minPrice ?? priceRange.lowerBound)...(nestManager.searchRequest.maxPrice ?? priceRange.upperBound)
             },
             set: { newRange in
-                currentSearchRequest.minPrice = newRange.lowerBound
-                currentSearchRequest.maxPrice = newRange.upperBound
+                nestManager.searchRequest.minPrice = newRange.lowerBound
+                nestManager.searchRequest.maxPrice = newRange.upperBound
             }
         )
     }
@@ -66,37 +59,37 @@ struct SelectionView: View {
     private let bathroomsOptions: [Int] = [1, 2, 3, 4, 5]
     private var bathroomsBinding: Binding<Int> {
         .init(
-            get: { currentSearchRequest.bathroomNum ?? 1 },
-            set: { currentSearchRequest.bathroomNum = $0 }
+            get: { nestManager.searchRequest.bathroomNum ?? 1 },
+            set: { nestManager.searchRequest.bathroomNum = $0 }
         )
     }
     
     private let bedroomsOptions: [Int] = [1, 2, 3, 4, 5]
     private var bedroomsBinding: Binding<Int> {
         .init(
-            get: { currentSearchRequest.bedroomsNum ?? 1 },
-            set: { currentSearchRequest.bedroomsNum = $0 }
+            get: { nestManager.searchRequest.bedroomsNum ?? 1 },
+            set: { nestManager.searchRequest.bedroomsNum = $0 }
         )
     }
     
     private var squareFootageBinding: Binding<Double> {
         .init(
-            get: { Double(currentSearchRequest.squareFootage ?? 1800) },
-            set: { currentSearchRequest.squareFootage = Int($0) }
+            get: { Double(nestManager.searchRequest.squareFootage ?? 1800) },
+            set: { nestManager.searchRequest.squareFootage = Int($0) }
         )
     }
     
     private var backyardBinding: Binding<Bool> {
         .init(
-            get: { currentSearchRequest.backyard ?? false },
-            set: { currentSearchRequest.backyard = $0 }
+            get: { nestManager.searchRequest.backyard ?? false },
+            set: { nestManager.searchRequest.backyard = $0 }
         )
     }
 
     private var garageBinding: Binding<Bool> {
         .init(
-            get: { currentSearchRequest.garage ?? false },
-            set: { currentSearchRequest.garage = $0 }
+            get: { nestManager.searchRequest.garage ?? false },
+            set: { nestManager.searchRequest.garage = $0 }
         )
     }
 
@@ -105,13 +98,14 @@ struct SelectionView: View {
             VStack {
                 settings
                     .padding(.top, -24)
-                    .frame(height: 760)
+                    .frame(height: 840)
                 
                 Button {
-                    print("A")
+                    nestManager.computeSearchResults()
                 } label: {
                     Text("Search…")
                         .padding(6)
+                        .bold()
                 }
                 .padding()
                 .buttonSizing(.flexible)
@@ -119,94 +113,97 @@ struct SelectionView: View {
                 .padding(.top, -48)
             }
         }
+        .navigationTitle("Search Listings")
     }
     
     private var settings: some View {
         Form {
-            LocationSelectionView(location: placeDescriptorBinding)
-                .clipShape(
-                    .rect(cornerRadius: 8)
-                )
-                .frame(height: 280)
+            Section {
+                LocationSelectionView(location: placeDescriptorBinding)
+                    .clipShape(
+                        .rect(cornerRadius: 8)
+                    )
+                    .frame(height: 280)
+            }
 
-            VStack(alignment: .leading) {
-                HStack {
-                    Text("Price Range")
+            Section {
+                VStack(alignment: .leading) {
+                    HStack {
+                        Text("Price Range")
+                        
+                        Spacer()
+                        
+                        let lowerRangeText = Text(
+                            priceRangeBinding.wrappedValue.lowerBound,
+                            format: .number.precision(.fractionLength(0))
+                        )
+                        
+                        let upperRangeText = Text(
+                            priceRangeBinding.wrappedValue.upperBound,
+                            format: .number.precision(.fractionLength(0))
+                        )
+                        
+                        Text("$\(lowerRangeText) - $\(upperRangeText)")
+                            .foregroundStyle(.secondary)
+                    }
                     
-                    Spacer()
-                    
-                    let lowerRangeText = Text(
-                        priceRangeBinding.wrappedValue.lowerBound,
-                        format: .number.precision(.fractionLength(0))
+                    RangedSliderView(
+                        value: priceRangeBinding,
+                        bounds: priceRange,
+                        step: 1e4
                     )
+                    .padding(.leading, 12)
+                    .padding(.trailing, 36)
+                }
+
+                VStack(alignment: .leading) {
+                    HStack {
+                        Text("Square footage")
+                        
+                        Spacer()
+                        
+                        let squareFootageText = Text(
+                            squareFootageBinding.wrappedValue,
+                            format: .number.precision(.fractionLength(0))
+                        )
+                        
+                        Text("\(squareFootageText) sq. ft.")
+                            .foregroundStyle(.secondary)
+                    }
                     
-                    let upperRangeText = Text(
-                        priceRangeBinding.wrappedValue.upperBound,
-                        format: .number.precision(.fractionLength(0))
+                    Slider(
+                        value: squareFootageBinding,
+                        in: 100...6000
                     )
-                    
-                    Text("$\(lowerRangeText) - $\(upperRangeText)")
-                        .foregroundStyle(.secondary)
+                }
+            }
+            
+            Section {
+                Picker(
+                    "Bathrooms",
+                    selection: bathroomsBinding
+                ) {
+                    ForEach(bathroomsOptions, id: \.self) { option in
+                        Text("\(option)")
+                    }
                 }
                 
-                RangedSliderView(
-                    value: priceRangeBinding,
-                    bounds: priceRange,
-                    step: 1e4
-                )
-                .padding(.leading, 12)
-                .padding(.trailing, 36)
-            }
-            
-            VStack(alignment: .leading) {
-                HStack {
-                    Text("Square footage")
-                    
-                    Spacer()
-                    
-                    let squareFootageText = Text(
-                        squareFootageBinding.wrappedValue,
-                        format: .number.precision(.fractionLength(0))
-                    )
-                    
-                    Text("\(squareFootageText) sq. ft.")
-                        .foregroundStyle(.secondary)
+                
+                Picker(
+                    "Bedrooms",
+                    selection: bedroomsBinding
+                ) {
+                    ForEach(bedroomsOptions, id: \.self) { option in
+                        Text("\(option)")
+                    }
                 }
                 
-                Slider(
-                    value: squareFootageBinding,
-                    in: 100...6000
-                )
+                Toggle("Has backyard", isOn: backyardBinding)
+                Toggle("Has garage", isOn: garageBinding)
             }
-            
-            Picker(
-                "Bathrooms",
-                selection: bathroomsBinding
-            ) {
-                ForEach(bathroomsOptions, id: \.self) { option in
-                    Text("\(option)")
-                }
-            }
-            
-            
-            Picker(
-                "Bedrooms",
-                selection: bedroomsBinding
-            ) {
-                ForEach(bedroomsOptions, id: \.self) { option in
-                    Text("\(option)")
-                }
-            }
-            
-            Toggle("Has backyard", isOn: backyardBinding)
-            Toggle("Has garage", isOn: garageBinding)
         }
         .formStyle(.grouped)
         .scrollContentBackground(.hidden)
         .scrollDisabled(true)
     }
-}
-
-#Preview {
-    SelectionView()
 }

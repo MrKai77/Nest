@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    let twig = Twig()
+    let nestManager = NestManager()
 
     var body: some View {
 //        VStack {
@@ -41,7 +41,13 @@ struct ContentView: View {
 //        }
 //        .padding()
         
-        SelectionView()
+        @Bindable var nestManager = nestManager
+        NavigationStack(path: $nestManager.path) {
+            nestManager.build(tab: .search)
+                .navigationDestination(for: NestTab.self) { tab in
+                    nestManager.build(tab: tab)
+                }
+        }
     }
 }
 

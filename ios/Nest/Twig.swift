@@ -41,7 +41,7 @@ struct SearchRequest: Codable {
 }
 
 // MARK: - Response Models
-struct Listing: Codable {
+struct Listing: Identifiable, Codable, Hashable {
     let id: String
     let longitude: Double
     let latitude: Double

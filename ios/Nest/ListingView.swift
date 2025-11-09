@@ -49,7 +49,9 @@ struct ListingView: View {
                 
                 Spacer()
 
-                Text(listing.price, format: .currency(code: "CAD"))
+                let price = Text(listing.price, format: .number.precision(.fractionLength(0)))
+                
+                Text("$\(price)")
                     .font(.headline.bold())
             }
             
@@ -84,6 +86,16 @@ struct ListingView: View {
             .foregroundStyle(.secondary)
             .font(.caption)
             
+            Divider()
+            
+            HStack {
+                Text("Landlord rating")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Spacer()
+                StarRatingView()
+            }
+
             Divider()
             
             Text("Last updated: \(Text(listing.dateListed, format: .dateTime))")
