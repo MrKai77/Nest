@@ -6,8 +6,6 @@ class DatabaseListing(BaseModel):
 
     price: float
     date_listed: str
-    created_at: str
-    updated_at: str
     image_url: Optional[str] = None
 
     # Location fields
@@ -22,7 +20,8 @@ class DatabaseListing(BaseModel):
     backyard: Optional[bool] = None
     garage: Optional[bool] = None
 
-    weightedScore: float
+    weighted_score: float
+    updated_at: str
 
 class Listing(BaseModel):
     id: str
